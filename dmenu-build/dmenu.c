@@ -62,6 +62,7 @@ static Drw *drw;
 static Clr *scheme[SchemeLast];
 
 static bool no_escape = false;
+static int numbers_count = 0;
 
 #include "config.h"
 
@@ -192,8 +193,9 @@ drawmenu(void)
 		drw_setscheme(drw, scheme[SchemeNorm]);
 		drw_rect(drw, x + curpos, 2 + (bh - fh) / 2, 2, fh - 4, 1, 0);
 	}
-
-	recalculatenumbers();
+    if (numbers_count) {
+        recalculatenumbers();
+    }
 	if (lines > 0) {
 		/* draw vertical list */
 		for (item = curr; item != next; item = item->right)
@@ -759,9 +761,8 @@ static void
 usage(void)
 {
 	die("usage: dmenu [-bfirv] [-l lines] [-h height] [-p prompt] [-fn font] [-m monitor]\n"
-        "             [-no-escape]\n"
-        "             [-x offset] [-y offset] [-z width]\n"
-	    "             [-nb color] [-nf color] [-sb color] [-sf color] [-w windowid]");
+        "             [-no-escape] [-cn numbers] [-sf color] [-w windowid] [-sb color]\n"
+        "             [-x offset] [-y offset] [-z width] [-nb color] [-nf color]");
 }
 
 int
@@ -779,6 +780,8 @@ main(int argc, char *argv[])
 			topbar = 0;
 		else if (!strcmp(argv[i], "-f"))   /* grabs keyboard before reading stdin */
 			fast = 1;
+		else if (!strcmp(argv[i], "-cn"))   /* display numbers */
+            numbers_count = 1;
 		else if (!strcmp(argv[i], "-i")) { /* case-insensitive item matching */
 			fstrncmp = strncasecmp;
 			fstrstr = cistrstr;
